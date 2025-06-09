@@ -1,38 +1,106 @@
+// blogs.js - Version without ES6 modules
+console.log('blogs.js loaded successfully'); // Debug line
+
+// Firebase will be loaded via CDN scripts in HTML
+// Make sure you have these scripts in your HTML before blogs.js:
+/*
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+*/
+
+// Your Firebase config (replace with your actual config)
+const firebaseConfig = {
+    apiKey: "AIzaSyC5nt7cRJ45IAfqNW2qdHIVWwSPVxfin7M",
+    authDomain: "my-blog-3a17d.firebaseapp.com",
+    projectId: "my-blog-3a17d",
+    storageBucket: "my-blog-3a17d.firebasestorage.app",
+    messagingSenderId: "718509051314",
+    appId: "1:718509051314:web:410b70a02da8e51c69e8ab",
+    measurementId: "G-HCE8E6YZDG"
+  };
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const analytics = firebase.analytics();
+
 let posts = [];
 let postId = 0;
 
-// Load sample posts on page load
+// Load posts from Firebase on page load
 document.addEventListener('DOMContentLoaded', function() {
-    loadSamplePosts();
-    renderPosts();
+    console.log('DOM loaded, calling loadPostsFromFirebase');
+    loadPostsFromFirebase();
 });
 
-function loadSamplePosts() {
-    const samplePosts = [
-        {
-            id: postId++,
-            title: "Getting Started with Web Development",
-            content: "A beginner's guide to learning web development in 2024. Covering HTML, CSS, JavaScript, and modern frameworks.",
-            date: "March 15, 2024"
-        },
-        {
-            id: postId++,
-            title: "The Future of Technology",
-            content: "Exploring emerging technologies and their potential impact on our daily lives and society as a whole.",
-            date: "March 10, 2024"
-        },
-        {
-            id: postId++,
-            title: "Building Better User Experiences",
-            content: "Tips and best practices for creating intuitive and accessible user interfaces that delight users.",
-            date: "March 5, 2024"
+async function loadPostsFromFirebase() {
+    console.log('loadPostsFromFirebase called');
+    try {
+        const snapshot = await db.collection('posts').orderBy('timestamp', 'desc').get();
+        posts = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            posts.push({
+                id: data.id,
+                title: data.title,
+                content: data.content,
+                date: data.date,
+                firebaseId: doc.id
+            });
+        });
+        
+        // Set postId to highest ID + 1
+        postId = posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 0;
+        
+        renderPosts();
+    } catch (error) {
+        console.error('Error loading posts:', error);
+        alert('Error loading posts. Check your Firebase configuration.');
+    }
+}
+
+async function savePostToFirebase(post) {
+    try {
+        await db.collection('posts').add({
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            date: post.date,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Error saving post:', error);
+        alert('Error saving post. Please try again.');
+    }
+}
+
+async function deletePostFromFirebase(postId) {
+    try {
+        // Find the post in local array to get Firebase ID
+        const post = posts.find(p => p.id === postId);
+        if (!post || !post.firebaseId) {
+            throw new Error('Post not found or missing Firebase ID');
         }
-    ];
-    
-    posts = [...samplePosts];
+        
+        // Delete from Firebase
+        await db.collection('posts').doc(post.firebaseId).delete();
+        
+        // Remove from local array
+        posts = posts.filter(p => p.id !== postId);
+        
+        // Re-render posts
+        renderPosts();
+        
+        console.log('Post deleted successfully');
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        alert('Error deleting post. Please try again.');
+    }
 }
 
 function toggleNewPostForm() {
+    console.log('toggleNewPostForm called'); // Debug line
     const form = document.getElementById('newPostForm');
     form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
     
@@ -45,7 +113,8 @@ function toggleNewPostForm() {
     }
 }
 
-function createPost() {
+async function createPost() {
+    console.log('createPost called'); // Debug line
     const title = document.getElementById('postTitle').value.trim();
     const content = document.getElementById('postContent').value.trim();
     
@@ -65,7 +134,11 @@ function createPost() {
         })
     };
     
-    posts.unshift(newPost); // Add to beginning of array
+    // Save to Firebase
+    await savePostToFirebase(newPost);
+    
+    // Add to local array and render
+    posts.unshift(newPost);
     renderPosts();
     toggleNewPostForm();
     
@@ -88,24 +161,19 @@ function renderPosts() {
     }
     
     const postsHtml = posts.map(post => `
-        <div class="blog-card" data-id="${post.id}" onclick="viewPost(${post.id})">
-            <h3>${escapeHtml(post.title)}</h3>
-            <p>${escapeHtml(post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content)}</p>
-            <div class="blog-date">${post.date}</div>
+        <div class="blog-card" data-id="${post.id}">
+            <div class="blog-card-header">
+                <h3 onclick="viewPost(${post.id})" style="cursor: pointer; margin: 0; flex-grow: 1;">${escapeHtml(post.title)}</h3>
+                <button class="delete-btn" onclick="confirmDeletePost(${post.id})" title="Delete post">×</button>
+            </div>
+            <p onclick="viewPost(${post.id})" style="cursor: pointer;">${escapeHtml(post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content)}</p>
+            <div class="blog-date" onclick="viewPost(${post.id})" style="cursor: pointer;">${post.date}</div>
         </div>
     `).join('');
     
     blogGrid.innerHTML = postsHtml;
 }
 
-// Helper function to escape HTML characters
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// View individual post
 function viewPost(id) {
     const post = posts.find(p => p.id === id);
     if (!post) {
@@ -125,7 +193,6 @@ function viewPost(id) {
 function showPostView(post) {
     const blogSection = document.getElementById('blog');
     
-    // Create post view HTML
     const postViewHtml = `
         <div id="postView" class="post-view">
             <button class="btn btn-secondary back-btn" onclick="backToBlog()">← Back to Blog</button>
@@ -141,22 +208,37 @@ function showPostView(post) {
         </div>
     `;
     
-    // Insert after the section title
     const sectionTitle = blogSection.querySelector('.section-title');
     sectionTitle.insertAdjacentHTML('afterend', postViewHtml);
     
-    // Scroll to top of blog section
     blogSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 function backToBlog() {
-    // Remove post view
     const postView = document.getElementById('postView');
     if (postView) {
         postView.remove();
     }
     
-    // Show blog grid and controls
     document.getElementById('blogGrid').style.display = 'grid';
     document.querySelector('button[onclick="toggleNewPostForm()"]').style.display = 'inline-block';
+}
+
+function confirmDeletePost(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (!post) {
+        alert('Post not found');
+        return;
+    }
+    
+    // Show confirmation dialog
+    if (confirm(`Are you sure you want to delete "${post.title}"?\n\nThis action cannot be undone.`)) {
+        deletePostFromFirebase(postId);
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

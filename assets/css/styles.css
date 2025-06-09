@@ -324,6 +324,46 @@ footer {
     margin-bottom: 1rem;
 }
 
+/* Add this to your CSS file */
+.blog-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.delete-btn {
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    background: #ff3838;
+    transform: scale(1.1);
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* Make sure blog cards have relative positioning */
+.blog-card {
+    position: relative;
+}
+
 /* Animations */
 @keyframes fadeInUp {
     from {
