@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personal blog sharing thoughts, ideas, and experiences">
+    <meta name="author" content="Your Name">
+    <title>My Personal Blog</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">MyBlog</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h1>Welcome to My Blog</h1>
+                <p>Sharing thoughts, ideas, and experiences from my journey</p>
+                <a href="#blog" class="cta-button">Explore Posts</a>
+            </div>
+        </section>
+
+        <div class="container">
+            <section id="blog" class="content-section">
+                <h2 class="section-title">Latest Posts</h2>
+                
+                <button class="btn" onclick="toggleNewPostForm()">Write New Post</button>
+                
+                <div id="newPostForm" class="new-post-form">
+                    <h3>Create New Post</h3>
+                    <div class="form-group">
+                        <label for="postTitle">Title</label>
+                        <input type="text" id="postTitle" placeholder="Enter post title">
+                    </div>
+                    <div class="form-group">
+                        <label for="postContent">Content</label>
+                        <textarea id="postContent" placeholder="Write your post content here..."></textarea>
+                    </div>
+                    <button class="btn" onclick="createPost()">Publish Post</button>
+                    <button class="btn btn-secondary" onclick="toggleNewPostForm()">Cancel</button>
+                </div>
+
+                <div id="blogGrid" class="blog-grid">
+                    <!-- Posts will be loaded here by JavaScript -->
+                </div>
+            </section>
+
+            <section id="about" class="content-section">
+                <h2 class="section-title">About Me</h2>
+                <p>Welcome to my personal blog! I'm passionate about technology, design, and sharing knowledge with the community. Here you'll find my thoughts on web development, life experiences, and various topics that interest me.</p>
+                <p>Feel free to explore my posts and connect with me through the links below. I love hearing from readers and fellow developers!</p>
+            </section>
+
+            <section id="contact" class="content-section">
+                <h2 class="section-title">Get In Touch</h2>
+                <p>I'd love to hear from you! Whether you want to discuss a post, collaborate on a project, or just say hello, don't hesitate to reach out.</p>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p><strong>Email:</strong> hello@myblog.com</p>
+                    <p><strong>Location:</strong> Your City, Country</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#" title="Twitter">T</a>
+                <a href="#" title="LinkedIn">L</a>
+                <a href="#" title="GitHub">G</a>
+                <a href="#" title="Email">@</a>
+            </div>
+            <p>&copy; 2024 MyBlog. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/blogs.js"></script>
+</body>
+</html>

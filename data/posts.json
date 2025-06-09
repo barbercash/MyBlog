@@ -1,0 +1,31 @@
+{
+    "posts": [
+      {
+        "id": 1,
+        "title": "Getting Started with Web Development",
+        "content": "A beginner's guide to learning web development in 2024. Covering HTML, CSS, JavaScript, and modern frameworks. This comprehensive guide will take you through the fundamentals of web development, from basic HTML structure to advanced JavaScript frameworks.",
+        "date": "2024-03-15",
+        "author": "Your Name",
+        "tags": ["web-development", "beginner", "html", "css", "javascript"],
+        "featured": true
+      },
+      {
+        "id": 2,
+        "title": "The Future of Technology",
+        "content": "Exploring emerging technologies and their potential impact on our daily lives and society as a whole. From artificial intelligence to quantum computing, we'll dive into the technologies that will shape our future.",
+        "date": "2024-03-10",
+        "author": "Your Name",
+        "tags": ["technology", "future", "ai", "innovation"],
+        "featured": false
+      },
+      {
+        "id": 3,
+        "title": "Building Better User Experiences",
+        "content": "Tips and best practices for creating intuitive and accessible user interfaces that delight users. Learn about user research, design principles, and implementation strategies that make a difference.",
+        "date": "2024-03-05",
+        "author": "Your Name",
+        "tags": ["ux", "design", "accessibility", "user-interface"],
+        "featured": false
+      }
+    ]
+  }
